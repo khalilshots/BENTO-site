@@ -6,302 +6,83 @@
 <title>Bento — Stay in flow. Never switch windows again.</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0f0f11;
-    --surface: #18181c;
-    --surface2: #222228;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0efe8;
-    --muted: #888880;
-    --accent: #d4a84b;
-    --accent-dim: rgba(212,168,75,0.12);
-    --accent-glow: rgba(212,168,75,0.25);
-    --white: #ffffff;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 2.5rem;
-    border-bottom: 1px solid var(--border);
-    background: rgba(15,15,17,0.85);
-    backdrop-filter: blur(12px);
-  }
-  .nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.25rem;
-    color: var(--text);
-    letter-spacing: 0.01em;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; align-items: center; gap: 2rem; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 400; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--text); }
-  .btn-nav {
-    background: var(--accent); color: #0f0f11; border: none; cursor: pointer;
-    padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;
-    font-family: 'DM Sans', sans-serif; transition: opacity 0.2s;
-    text-decoration: none;
-  }
-  .btn-nav:hover { opacity: 0.88; }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 7rem 2rem 4rem;
-    position: relative; overflow: hidden;
-  }
-  .hero-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4rem; align-items: center;
-    max-width: 1100px; width: 100%;
-  }
-  .hero-eyebrow {
-    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent);
-    margin-bottom: 1.25rem;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .hero-eyebrow::before {
-    content: ''; display: block; width: 24px; height: 1px; background: var(--accent);
-  }
-  h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.5rem, 5vw, 3.75rem);
-    line-height: 1.08;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.01em;
-  }
-  h1 em { color: var(--accent); font-style: italic; }
-  .hero-body {
-    font-size: 1.0625rem; color: var(--muted); line-height: 1.75;
-    margin-bottom: 2.5rem; max-width: 440px;
-    font-weight: 300;
-  }
-  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--accent); color: #0f0f11; border: none; cursor: pointer;
-    padding: 0.875rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: 500;
-    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-ghost {
-    background: transparent; color: var(--text); border: 1px solid var(--border); cursor: pointer;
-    padding: 0.875rem 1.75rem; border-radius: 8px; font-size: 1rem; font-weight: 400;
-    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
-  .hero-note { font-size: 0.8125rem; color: var(--muted); margin-top: 1rem; }
-
-  /* CHARACTER STAGE */
-  .character-stage {
-    position: relative; display: flex; align-items: center; justify-content: center;
-    height: 480px;
-  }
-  .stage-bg {
-    position: absolute; inset: 0; border-radius: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .stage-bg::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 60% 40%, var(--accent-dim) 0%, transparent 65%);
-  }
-  .stage-floor {
-    position: absolute; bottom: 60px; left: 0; right: 0;
-    height: 1px; background: var(--border);
-  }
-  .stage-dots {
-    position: absolute; inset: 0; opacity: 0.3;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
-  canvas#butler { position: relative; z-index: 2; }
-
-  .state-pills {
-    position: absolute; bottom: 16px; left: 0; right: 0;
-    display: flex; justify-content: center; gap: 6px; z-index: 3;
-  }
-  .pill {
-    font-size: 0.7rem; padding: 3px 10px; border-radius: 999px;
-    border: 1px solid var(--border); color: var(--muted); cursor: pointer;
-    background: var(--surface); transition: all 0.15s; font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-  }
-  .pill:hover, .pill.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-
-  /* AMBIENT GLOW */
-  .glow {
-    position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
-  }
-  .glow-1 { width: 400px; height: 400px; background: rgba(212,168,75,0.06); top: 10%; right: -100px; }
-  .glow-2 { width: 300px; height: 300px; background: rgba(120,100,200,0.05); bottom: 20%; left: -80px; }
-
-  /* HOW IT WORKS */
-  .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent);
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-    line-height: 1.15; color: var(--text); margin-bottom: 1rem;
-  }
-  .section-sub { color: var(--muted); font-size: 1rem; font-weight: 300; max-width: 520px; }
-
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
-  .step {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 2rem;
-    position: relative; overflow: hidden;
-  }
-  .step::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .step:hover::before { opacity: 1; }
-  .step-num {
-    font-family: 'DM Serif Display', serif; font-size: 2.5rem;
-    color: var(--accent-dim); line-height: 1;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, var(--accent) 0%, rgba(212,168,75,0.3) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .step h3 { font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
-  .step p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
-
-  /* FEATURES */
-  .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 3.5rem; }
-  .feature {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start;
-    transition: border-color 0.2s;
-  }
-  .feature:hover { border-color: rgba(255,255,255,0.15); }
-  .feature-icon {
-    width: 36px; height: 36px; border-radius: 8px;
-    background: var(--accent-dim); display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; flex-shrink: 0;
-  }
-  .feature h4 { font-size: 0.9375rem; font-weight: 500; color: var(--text); margin-bottom: 0.25rem; }
-  .feature p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
-
-  /* WAITLIST */
-  .waitlist-section {
-    padding: 6rem 2rem;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .waitlist-inner { max-width: 560px; margin: 0 auto; text-align: center; }
-  .waitlist-inner .section-title { margin-bottom: 0.75rem; }
-  .waitlist-inner .section-sub { margin: 0 auto 2.5rem; }
-  .waitlist-form { display: flex; gap: 0.75rem; }
-  .waitlist-form input {
-    flex: 1; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); padding: 0.875rem 1.25rem; border-radius: 8px;
-    font-size: 0.9375rem; font-family: 'DM Sans', sans-serif; outline: none;
-    transition: border-color 0.2s;
-  }
-  .waitlist-form input:focus { border-color: var(--accent); }
-  .waitlist-form input::placeholder { color: var(--muted); }
-  .waitlist-form button {
-    background: var(--accent); color: #0f0f11; border: none; cursor: pointer;
-    padding: 0.875rem 1.5rem; border-radius: 8px; font-size: 0.9375rem; font-weight: 500;
-    font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: opacity 0.2s;
-  }
-  .waitlist-form button:hover { opacity: 0.88; }
-  .success-msg {
-    display: none; color: var(--accent); font-size: 0.9rem;
-    margin-top: 1rem; font-style: italic;
-  }
-  .waitlist-note { font-size: 0.8125rem; color: var(--muted); margin-top: 1rem; }
-
-  /* FOOTER */
-  footer {
-    padding: 2.5rem; display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8125rem;
-  }
-  .footer-logo { font-family: 'DM Serif Display', serif; color: var(--text); font-size: 1rem; }
-  .footer-logo span { color: var(--accent); }
-
-  /* VIDEO MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    z-index: 1000; display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 2rem; max-width: 720px; width: 90%;
-    position: relative;
-  }
-  .modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: transparent; border: none; color: var(--muted); cursor: pointer;
-    font-size: 1.25rem; line-height: 1; transition: color 0.2s;
-    font-family: sans-serif;
-  }
-  .modal-close:hover { color: var(--text); }
-  .video-placeholder {
-    width: 100%; aspect-ratio: 16/9; background: var(--bg);
-    border-radius: 12px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 1rem;
-    border: 1px solid var(--border); color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .play-icon {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--accent); display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-  }
-  .play-icon svg { margin-left: 4px; }
-
-  @media (max-width: 768px) {
-    .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .character-stage { height: 340px; }
-    .steps { grid-template-columns: 1fr; }
-    .features { grid-template-columns: 1fr; }
-    .waitlist-form { flex-direction: column; }
-    nav { padding: 1rem 1.25rem; }
-    .nav-links { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0f0f11;--surface:#18181c;--border:rgba(255,255,255,0.08);--text:#f0efe8;--muted:#888880;--accent:#d4a84b;--accent-dim:rgba(212,168,75,0.12)}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;border-bottom:1px solid var(--border);background:rgba(15,15,17,0.85);backdrop-filter:blur(12px)}
+  .nav-logo{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--text);display:flex;align-items:center;gap:8px}
+  .nav-logo span{color:var(--accent)}
+  .nav-links{display:flex;align-items:center;gap:2rem}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.875rem;transition:color 0.2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn-nav{background:var(--accent);color:#0f0f11;border:none;cursor:pointer;padding:0.5rem 1.25rem;border-radius:6px;font-size:0.875rem;font-weight:500;font-family:'DM Sans',sans-serif;text-decoration:none}
+  .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:7rem 2rem 4rem;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1100px;width:100%}
+  .hero-eyebrow{font-size:0.75rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+  .hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--accent)}
+  h1{font-family:'DM Serif Display',serif;font-size:clamp(2.5rem,5vw,3.75rem);line-height:1.08;color:var(--text);margin-bottom:1.5rem}
+  h1 em{color:var(--accent);font-style:italic}
+  .hero-body{font-size:1.0625rem;color:var(--muted);line-height:1.75;margin-bottom:2.5rem;max-width:440px;font-weight:300}
+  .hero-actions{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+  .btn-primary{background:var(--accent);color:#0f0f11;border:none;cursor:pointer;padding:0.875rem 2rem;border-radius:8px;font-size:1rem;font-weight:500;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:opacity 0.2s}
+  .btn-primary:hover{opacity:0.88}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);cursor:pointer;padding:0.875rem 1.75rem;border-radius:8px;font-size:1rem;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:all 0.2s}
+  .btn-ghost:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04)}
+  .hero-note{font-size:0.8125rem;color:var(--muted);margin-top:1rem}
+  .character-stage{position:relative;display:flex;align-items:center;justify-content:center;height:480px}
+  .stage-bg{position:absolute;inset:0;border-radius:24px;background:var(--surface);border:1px solid var(--border);overflow:hidden}
+  .stage-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,var(--accent-dim) 0%,transparent 65%)}
+  .stage-floor{position:absolute;bottom:60px;left:0;right:0;height:1px;background:var(--border)}
+  .stage-dots{position:absolute;inset:0;opacity:0.3;background-image:radial-gradient(circle,rgba(255,255,255,0.15) 1px,transparent 1px);background-size:28px 28px}
+  canvas#butler{position:relative;z-index:2}
+  .state-pills{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3}
+  .pill{font-size:0.7rem;padding:3px 10px;border-radius:999px;border:1px solid var(--border);color:var(--muted);cursor:pointer;background:var(--surface);transition:all 0.15s;font-family:'DM Sans',sans-serif}
+  .pill:hover,.pill.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+  .glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+  .glow-1{width:400px;height:400px;background:rgba(212,168,75,0.06);top:10%;right:-100px}
+  .glow-2{width:300px;height:300px;background:rgba(120,100,200,0.05);bottom:20%;left:-80px}
+  .section{padding:6rem 2rem;max-width:1100px;margin:0 auto}
+  .section-label{font-size:0.75rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+  .section-title{font-family:'DM Serif Display',serif;font-size:clamp(1.75rem,3.5vw,2.5rem);line-height:1.15;color:var(--text);margin-bottom:1rem}
+  .section-sub{color:var(--muted);font-size:1rem;font-weight:300;max-width:520px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;overflow:hidden}
+  .step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
+  .step:hover::before{opacity:1}
+  .step-num{font-family:'DM Serif Display',serif;font-size:2.5rem;line-height:1;margin-bottom:1rem;background:linear-gradient(135deg,var(--accent) 0%,rgba(212,168,75,0.3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .step h3{font-size:1rem;font-weight:500;color:var(--text);margin-bottom:0.5rem}
+  .step p{font-size:0.9rem;color:var(--muted);line-height:1.65;font-weight:300}
+  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:3.5rem}
+  .feature{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color 0.2s}
+  .feature:hover{border-color:rgba(255,255,255,0.15)}
+  .feature-icon{width:36px;height:36px;border-radius:8px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+  .feature h4{font-size:0.9375rem;font-weight:500;color:var(--text);margin-bottom:0.25rem}
+  .feature p{font-size:0.875rem;color:var(--muted);line-height:1.6;font-weight:300}
+  .waitlist-section{padding:6rem 2rem;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .waitlist-inner{max-width:560px;margin:0 auto;text-align:center}
+  .waitlist-inner .section-title{margin-bottom:0.75rem}
+  .waitlist-inner .section-sub{margin:0 auto 2.5rem}
+  .waitlist-form{display:flex;gap:0.75rem}
+  .waitlist-form input{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:0.875rem 1.25rem;border-radius:8px;font-size:0.9375rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+  .waitlist-form input:focus{border-color:var(--accent)}
+  .waitlist-form input::placeholder{color:var(--muted)}
+  .waitlist-form button{background:var(--accent);color:#0f0f11;border:none;cursor:pointer;padding:0.875rem 1.5rem;border-radius:8px;font-size:0.9375rem;font-weight:500;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:opacity 0.2s}
+  .waitlist-form button:hover{opacity:0.88}
+  .success-msg{display:none;color:var(--accent);font-size:0.9rem;margin-top:1rem;font-style:italic}
+  .waitlist-note{font-size:0.8125rem;color:var(--muted);margin-top:1rem}
+  footer{padding:2.5rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);color:var(--muted);font-size:0.8125rem}
+  .footer-logo{font-family:'DM Serif Display',serif;color:var(--text);font-size:1rem}
+  .footer-logo span{color:var(--accent)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+  .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;max-width:720px;width:90%;position:relative}
+  .modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1.25rem;line-height:1;font-family:sans-serif}
+  .modal-close:hover{color:var(--text)}
+  @media(max-width:768px){.hero-grid{grid-template-columns:1fr;gap:2.5rem}.character-stage{height:340px}.steps{grid-template-columns:1fr}.features{grid-template-columns:1fr}.waitlist-form{flex-direction:column}nav{padding:1rem 1.25rem}.nav-links{display:none}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">Bento <span>🎩</span></div>
   <div class="nav-links">
@@ -311,19 +92,15 @@
   </div>
 </nav>
 
-<!-- AMBIENT GLOWS -->
 <div class="glow glow-1"></div>
 <div class="glow glow-2"></div>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-grid">
     <div>
       <div class="hero-eyebrow">macOS menubar agent</div>
       <h1>Stay in flow.<br><em>Never switch</em><br>windows again.</h1>
-      <p class="hero-body">
-        Bento is your virtual butler. Type a task — find a file, play music, search the web — and he handles it on a separate desktop while you stay exactly where you are.
-      </p>
+      <p class="hero-body">Bento is your virtual butler. Type a task — find a file, play music, search the web — and he handles it on a separate desktop while you stay exactly where you are.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="openModal()">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor"/></svg>
@@ -333,13 +110,8 @@
       </div>
       <p class="hero-note">macOS 13+. Free early access, no card required.</p>
     </div>
-
-    <!-- CHARACTER STAGE -->
     <div class="character-stage">
-      <div class="stage-bg">
-        <div class="stage-dots"></div>
-        <div class="stage-floor"></div>
-      </div>
+      <div class="stage-bg"><div class="stage-dots"></div><div class="stage-floor"></div></div>
       <canvas id="butler" width="280" height="380"></canvas>
       <div class="state-pills">
         <button class="pill active" onclick="setState('idle',this)">idle</button>
@@ -352,93 +124,42 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<div id="how-it-works" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+<div id="how-it-works" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="section">
     <div class="section-label">How it works</div>
     <h2 class="section-title">Three steps.<br>Zero context switches.</h2>
     <p class="section-sub">Bento runs on a fully isolated virtual desktop. You never see it working — until it's done.</p>
     <div class="steps">
-      <div class="step">
-        <div class="step-num">01</div>
-        <h3>Type your task</h3>
-        <p>Open Bento from the menubar and describe what you need in plain English. No commands, no syntax.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <h3>Bento disappears</h3>
-        <p>He salutes, runs off screen, and handles it on a separate virtual desktop — never touching yours.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <h3>He comes back</h3>
-        <p>When it's done, Bento returns with the result. File on your clipboard. Music playing. Task complete.</p>
-      </div>
+      <div class="step"><div class="step-num">01</div><h3>Type your task</h3><p>Open Bento from the menubar and describe what you need in plain English. No commands, no syntax.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>Bento disappears</h3><p>He salutes, runs off screen, and handles it on a separate virtual desktop — never touching yours.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>He comes back</h3><p>When it's done, Bento returns with the result. File on your clipboard. Music playing. Task complete.</p></div>
     </div>
   </div>
 </div>
 
-<!-- FEATURES -->
 <div id="features">
   <div class="section">
     <div class="section-label">Features</div>
     <h2 class="section-title">Built for people who<br>can't afford distractions.</h2>
     <p class="section-sub">Especially if you have ADHD — every context switch is a potential spiral. Bento eliminates them entirely.</p>
     <div class="features">
-      <div class="feature">
-        <div class="feature-icon">📁</div>
-        <div>
-          <h4>Find and open anything</h4>
-          <p>Spotlight-powered file search. Ask for a file by name or description and it lands on your clipboard.</p>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🎵</div>
-        <div>
-          <h4>Spotify control</h4>
-          <p>Play, pause, skip, or search for something new — without ever leaving your current window.</p>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔍</div>
-        <div>
-          <h4>Web research</h4>
-          <p>Ask Bento to look something up. He searches, reads, and comes back with the answer.</p>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">👀</div>
-        <div>
-          <h4>Peek window</h4>
-          <p>Curious? Open a small window and literally watch Bento work on his own isolated desktop.</p>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🧠</div>
-        <div>
-          <h4>Two brains, your choice</h4>
-          <p>Pro uses Claude Haiku for speed and quality. Free tier runs a local model — fully offline, zero API costs.</p>
-        </div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🎩</div>
-        <div>
-          <h4>A butler with personality</h4>
-          <p>He salutes when he gets a task. Waves when he's done. Small things that make the handoff feel right.</p>
-        </div>
-      </div>
+      <div class="feature"><div class="feature-icon">📁</div><div><h4>Find and open anything</h4><p>Spotlight-powered file search. Ask for a file by name or description and it lands on your clipboard.</p></div></div>
+      <div class="feature"><div class="feature-icon">🎵</div><div><h4>Spotify control</h4><p>Play, pause, skip, or search for something new — without ever leaving your current window.</p></div></div>
+      <div class="feature"><div class="feature-icon">🔍</div><div><h4>Web research</h4><p>Ask Bento to look something up. He searches, reads, and comes back with the answer.</p></div></div>
+      <div class="feature"><div class="feature-icon">👀</div><div><h4>Peek window</h4><p>Curious? Open a small window and literally watch Bento work on his own isolated desktop.</p></div></div>
+      <div class="feature"><div class="feature-icon">🧠</div><div><h4>Two brains, your choice</h4><p>Pro uses Claude Haiku for speed and quality. Free tier runs a local model — fully offline, zero API costs.</p></div></div>
+      <div class="feature"><div class="feature-icon">🎩</div><div><h4>A butler with personality</h4><p>He salutes when he gets a task. Waves when he's done. Small things that make the handoff feel right.</p></div></div>
     </div>
   </div>
 </div>
 
-<!-- WAITLIST -->
 <div class="waitlist-section" id="waitlist">
   <div class="waitlist-inner">
-    <div class="section-label" style="text-align:center;">Early access</div>
+    <div class="section-label" style="text-align:center">Early access</div>
     <h2 class="section-title">Be first in line.</h2>
     <p class="section-sub">Bento is in early development. Join the waitlist and get access before anyone else.</p>
     <div class="waitlist-form">
-      <input type="email" id="email-input" placeholder="your@email.com" />
+      <input type="email" id="email-input" placeholder="your@email.com"/>
       <button onclick="joinWaitlist()">Join waitlist</button>
     </div>
     <div class="success-msg" id="success-msg">🎩 You're on the list. Bento will be in touch.</div>
@@ -446,320 +167,127 @@
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Bento <span>🎩</span></div>
   <div>Built in public — macOS 13+</div>
 </footer>
 
-<!-- VIDEO MODAL -->
-<video 
-  width="100%" 
-  style="border-radius: 12px;" 
-  controls 
-  autoplay 
-  muted 
-  loop
->
-  <source src="/bentodemo1.mp4" type="video/mp4">
-</video>
+<!-- MODAL: display:none fixes the classList error -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="closeModalOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <video id="demo-video" width="100%" style="border-radius:12px;display:block" controls muted loop>
+      <source src="/bentodemo1.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
 
 <script>
-/* ─── BUTLER CANVAS ANIMATION ─── */
 const canvas = document.getElementById('butler');
 const ctx = canvas.getContext('2d');
-const CX = canvas.width / 2;
-const FLOOR = 330;
-
-let state = 'idle';
-let phase = 0;
-let blinkTimer = 0;
-let blinkDuration = 0;
-let nextBlink = 80 + Math.random() * 120;
-let offsetX = 0;
-let offsetY = 0;
-let runProgress = 0;
-let runDirection = 1;
-let speechText = '';
-let speechTimer = 0;
-let peekProgress = 0;
-let peekDirection = 1;
-let forearmWave = 0;
-let hatTilt = 0;
-let doneProgress = 0;
-
-const STROKE = '#e8e8e0';
-const CHEEK  = 'rgba(220,100,80,0.65)';
-const HAT_DARK = '#1a1a1a';
-const HAT_BAND = '#d4a84b';
-const SHADOW = 'rgba(0,0,0,0.22)';
-
-function easeOut(t) { return 1 - Math.pow(1-t, 3); }
-function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
-
-function line(x1,y1,x2,y2,w,col) {
-  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-  ctx.strokeStyle = col||STROKE; ctx.lineWidth = w||3.5;
-  ctx.lineCap = 'round'; ctx.stroke();
-}
-
-function drawButler(ox, oy, blink, mood, armAngleL, armAngleR, legSwing, scale, opacity, faceDir, forearmAngle, _hatTilt) {
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.translate(CX + ox, FLOOR + oy);
-  ctx.scale(scale * faceDir, scale);
-
-  const R = 22;          // head radius
-  const headY = -148;    // head centre Y (above floor=0)
-  const neckBot = headY + R + 2;
-  const hipY = neckBot + 68;  // torso length
-  const LW = 3.5;        // limb stroke width
-
-  // Shadow
-  ctx.save(); ctx.scale(1/faceDir,1);
-  ctx.beginPath(); ctx.ellipse(0,4,22*scale,5*scale,0,0,Math.PI*2);
-  ctx.fillStyle=SHADOW; ctx.fill(); ctx.restore();
-
-  // ── TORSO ──
-  line(0, neckBot, 0, hipY, LW);
-
-  // ── ARMS ──
-  // left arm (upper)
-  ctx.save(); ctx.translate(-2, neckBot+10); ctx.rotate(armAngleL);
-  line(0,0,0,38,LW);
-  // forearm (salute / done wave)
-  if (forearmAngle !== 0) {
-    ctx.save(); ctx.translate(0,38); ctx.rotate(forearmAngle);
-    line(0,0,0,30,LW); ctx.restore();
-  }
+const CX = canvas.width/2, FLOOR = 330;
+let state='idle', phase=0, blinkTimer=0, blinkDuration=0;
+let nextBlink=80+Math.random()*120;
+let runProgress=0, speechTimer=0, peekProgress=0, doneProgress=0;
+const STROKE='#e8e8e0', CHEEK='rgba(220,100,80,0.65)', HAT_DARK='#1a1a1a', HAT_BAND='#d4a84b', SHADOW='rgba(0,0,0,0.22)';
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function easeInOut(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+function line(x1,y1,x2,y2,w,col){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col||STROKE;ctx.lineWidth=w||3.5;ctx.lineCap='round';ctx.stroke()}
+function drawButler(ox,oy,blink,mood,armAngleL,armAngleR,legSwing,scale,opacity,faceDir,forearmAngle,_hatTilt){
+  ctx.save();ctx.globalAlpha=opacity;ctx.translate(CX+ox,FLOOR+oy);ctx.scale(scale*faceDir,scale);
+  const R=22,headY=-148,neckBot=headY+R+2,hipY=neckBot+68,LW=3.5;
+  ctx.save();ctx.scale(1/faceDir,1);ctx.beginPath();ctx.ellipse(0,4,22*scale,5*scale,0,0,Math.PI*2);ctx.fillStyle=SHADOW;ctx.fill();ctx.restore();
+  line(0,neckBot,0,hipY,LW);
+  ctx.save();ctx.translate(-2,neckBot+10);ctx.rotate(armAngleL);line(0,0,0,38,LW);
+  if(forearmAngle!==0){ctx.save();ctx.translate(0,38);ctx.rotate(forearmAngle);line(0,0,0,30,LW);ctx.restore()}
   ctx.restore();
-
-  // right arm
-  ctx.save(); ctx.translate(2, neckBot+10); ctx.rotate(armAngleR);
-  line(0,0,0,38,LW); ctx.restore();
-
-  // ── LEGS ──
-  ctx.save(); ctx.translate(-6, hipY); ctx.rotate(legSwing);
-  line(0,0,0,52,LW);
-  // foot
-  line(0,52,14,52,LW);
-  ctx.restore();
-
-  ctx.save(); ctx.translate(6, hipY); ctx.rotate(-legSwing);
-  line(0,0,0,52,LW);
-  line(0,52,-14,52,LW);
-  ctx.restore();
-
-  // ── HEAD ──
-  ctx.save(); ctx.translate(0, headY);
-
-  // head circle
-  ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2);
-  ctx.fillStyle='#f0f0e8'; ctx.fill();
-  ctx.strokeStyle=STROKE; ctx.lineWidth=2; ctx.stroke();
-
-  // cheeks
-  const ck = mood==='done' ? 0.8 : 0.6;
-  ctx.globalAlpha = ck * opacity;
-  ctx.beginPath(); ctx.ellipse(-12,7,7,5,-0.3,0,Math.PI*2);
-  ctx.fillStyle=CHEEK; ctx.fill();
-  ctx.beginPath(); ctx.ellipse(12,7,7,5,0.3,0,Math.PI*2);
-  ctx.fillStyle=CHEEK; ctx.fill();
-  ctx.globalAlpha = opacity;
-
-  // eyes
-  if (blink) {
-    ctx.beginPath();
-    ctx.moveTo(-9,-3); ctx.lineTo(-4,-3);
-    ctx.moveTo(4,-3); ctx.lineTo(9,-3);
-    ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke();
-  } else {
-    ctx.beginPath();
-    ctx.arc(-6,-3,3.5,0,Math.PI*2);
-    ctx.arc(6,-3,3.5,0,Math.PI*2);
-    ctx.fillStyle='#1a1a1a'; ctx.fill();
-    // eye shine
-    ctx.beginPath();
-    ctx.arc(-5,-4,1.2,0,Math.PI*2);
-    ctx.arc(7,-4,1.2,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fill();
-  }
-
-  // mouth
-  if (mood==='o') {
-    ctx.beginPath(); ctx.arc(0,10,4,0,Math.PI*2);
-    ctx.fillStyle='#1a1a1a'; ctx.fill();
-  } else if (mood==='done') {
-    ctx.beginPath(); ctx.arc(0,8,9,0.2,Math.PI-0.2);
-    ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke();
-  } else {
-    ctx.beginPath(); ctx.arc(0,8,6,0.25,Math.PI-0.25);
-    ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.stroke();
-  }
-
-  // ── HAT ──
-  ctx.save(); ctx.rotate(_hatTilt);
-  // brim (flat rect)
-  ctx.beginPath(); ctx.rect(-R-8,-R+1,R*2+16,5);
-  ctx.fillStyle=HAT_DARK; ctx.fill();
-  // crown
-  ctx.beginPath(); ctx.rect(-R+2,-R-38,R*2-4,40);
-  ctx.fillStyle=HAT_DARK; ctx.fill();
-  // band
-  ctx.beginPath(); ctx.rect(-R+2,-R+1,R*2-4,5);
-  ctx.fillStyle=HAT_BAND; ctx.fill();
-  ctx.restore();
-
-  ctx.restore(); // head
-  ctx.restore(); // main
-}
-
-function drawSpeech(text, ox, oy, opacity) {
-  if (!text || opacity <= 0) return;
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  const x = CX + ox - 80;
-  const y = FLOOR + oy - 230;
-  const w = 160; const h = 36;
-  const r2 = 10;
-  ctx.beginPath();
-  ctx.roundRect(x, y, w, h, r2);
-  ctx.fillStyle = '#ffffff'; ctx.fill();
-  // tail
-  ctx.beginPath();
-  ctx.moveTo(x + w/2 - 8, y + h);
-  ctx.lineTo(x + w/2 + 8, y + h);
-  ctx.lineTo(x + w/2, y + h + 10);
-  ctx.fillStyle = '#ffffff'; ctx.fill();
-  ctx.font = '500 12px "DM Sans", sans-serif';
-  ctx.fillStyle = '#1a1a1a';
-  ctx.textAlign = 'center';
-  ctx.fillText(text, x + w/2, y + h/2 + 4);
-  ctx.restore();
-}
-
-function tick() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  phase += 0.04;
-  blinkTimer++;
-
-  let blink = false;
-  if (blinkTimer > nextBlink) {
-    blinkDuration++;
-    blink = true;
-    if (blinkDuration > 4) { blinkDuration = 0; blinkTimer = 0; nextBlink = 80 + Math.random()*120; }
-  }
-
-  let ox = 0, oy = 0, armL = 0, armR = 0, leg = 0, scale = 1, opacity = 1, faceDir = 1;
-  let forearm = 0, ht = 0, mood = 'smile', speechOpacity = 0;
-  let sp = '';
-
-  if (state === 'idle') {
-    oy = Math.sin(phase) * 5;
-    armL = Math.sin(phase * 0.7) * 0.12;
-    armR = -Math.sin(phase * 0.7) * 0.12;
-    leg = Math.sin(phase * 0.5) * 0.06;
-  } else if (state === 'salute') {
-    oy = Math.sin(phase * 0.5) * 2;
-    armL = -1.05;
-    forearm = -1.15;
-    ht = -0.14;
-    mood = 'smile';
-    sp = 'Right away! 🎩';
-    speechOpacity = 1;
-  } else if (state === 'runOff') {
-    runProgress = Math.min(runProgress + 0.018, 1);
-    const p = easeInOut(runProgress);
-    ox = p * 180;
-    scale = 1 - p * 0.35;
-    opacity = 1 - Math.max(0, (p - 0.75) * 4);
-    armL = Math.sin(phase * 4) * 0.6;
-    armR = -Math.sin(phase * 4) * 0.6;
-    leg = Math.sin(phase * 4) * 0.35;
-    mood = 'o';
-    faceDir = 1;
-    if (runProgress >= 1) { state = 'gone'; runProgress = 0; }
-  } else if (state === 'gone') {
-    opacity = 0;
-  } else if (state === 'done') {
-    doneProgress = Math.min(doneProgress + 0.022, 1);
-    const p = easeOut(doneProgress);
-    ox = (1 - p) * -180;
-    scale = 0.65 + p * 0.35;
-    opacity = p;
-    armL = -0.55;
-    forearm = Math.sin(phase * 6) * 0.8 - 0.4;
-    mood = 'done';
-    sp = 'Done! ✓';
-    speechOpacity = Math.min(1, (doneProgress - 0.5) * 4);
-    if (speechTimer > 0) speechTimer--;
-    if (doneProgress >= 1 && speechTimer === 0) speechTimer = 160;
-  } else if (state === 'peek') {
-    peekProgress = Math.min(peekProgress + 0.03, 1);
-    const p = easeOut(peekProgress);
-    ox = 80 - p * 60;
-    oy = Math.sin(phase * 0.5) * 3;
-    opacity = p;
-    armL = 0.15;
-    mood = 'o';
-  }
-
-  if (speechTimer > 0) speechOpacity = Math.min(1, speechTimer / 20);
-
-  drawButler(ox, oy, blink, mood, armL, armR, leg, scale, opacity, faceDir, forearm, ht);
-  if (sp || state === 'done') drawSpeech(sp, ox, oy, speechOpacity);
-
-  requestAnimationFrame(tick);
-}
-
-function setState(s, btn) {
-  state = s;
-  runProgress = 0; doneProgress = 0; peekProgress = 0; speechTimer = 0;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-}
-
+  ctx.save();ctx.translate(2,neckBot+10);ctx.rotate(armAngleR);line(0,0,0,38,LW);ctx.restore();
+  ctx.save();ctx.translate(-6,hipY);ctx.rotate(legSwing);line(0,0,0,52,LW);line(0,52,14,52,LW);ctx.restore();
+  ctx.save();ctx.translate(6,hipY);ctx.rotate(-legSwing);line(0,0,0,52,LW);line(0,52,-14,52,LW);ctx.restore();
+  ctx.save();ctx.translate(0,headY);
+  ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.fillStyle='#f0f0e8';ctx.fill();ctx.strokeStyle=STROKE;ctx.lineWidth=2;ctx.stroke();
+  const ck=mood==='done'?0.8:0.6;
+  ctx.globalAlpha=ck*opacity;
+  ctx.beginPath();ctx.ellipse(-12,7,7,5,-0.3,0,Math.PI*2);ctx.fillStyle=CHEEK;ctx.fill();
+  ctx.beginPath();ctx.ellipse(12,7,7,5,0.3,0,Math.PI*2);ctx.fillStyle=CHEEK;ctx.fill();
+  ctx.globalAlpha=opacity;
+  if(blink){ctx.beginPath();ctx.moveTo(-9,-3);ctx.lineTo(-4,-3);ctx.moveTo(4,-3);ctx.lineTo(9,-3);ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke()}
+  else{ctx.beginPath();ctx.arc(-6,-3,3.5,0,Math.PI*2);ctx.arc(6,-3,3.5,0,Math.PI*2);ctx.fillStyle='#1a1a1a';ctx.fill();ctx.beginPath();ctx.arc(-5,-4,1.2,0,Math.PI*2);ctx.arc(7,-4,1.2,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fill()}
+  if(mood==='o'){ctx.beginPath();ctx.arc(0,10,4,0,Math.PI*2);ctx.fillStyle='#1a1a1a';ctx.fill()}
+  else if(mood==='done'){ctx.beginPath();ctx.arc(0,8,9,0.2,Math.PI-0.2);ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke()}
+  else{ctx.beginPath();ctx.arc(0,8,6,0.25,Math.PI-0.25);ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke()}
+  ctx.save();ctx.rotate(_hatTilt);
+  ctx.beginPath();ctx.rect(-R-8,-R+1,R*2+16,5);ctx.fillStyle=HAT_DARK;ctx.fill();
+  ctx.beginPath();ctx.rect(-R+2,-R-38,R*2-4,40);ctx.fillStyle=HAT_DARK;ctx.fill();
+  ctx.beginPath();ctx.rect(-R+2,-R+1,R*2-4,5);ctx.fillStyle=HAT_BAND;ctx.fill();
+  ctx.restore();ctx.restore();ctx.restore()}
+function drawSpeech(text,ox,oy,opacity){
+  if(!text||opacity<=0)return;
+  ctx.save();ctx.globalAlpha=opacity;
+  const x=CX+ox-80,y=FLOOR+oy-230,w=160,h=36;
+  ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.fillStyle='#ffffff';ctx.fill();
+  ctx.beginPath();ctx.moveTo(x+w/2-8,y+h);ctx.lineTo(x+w/2+8,y+h);ctx.lineTo(x+w/2,y+h+10);ctx.fillStyle='#ffffff';ctx.fill();
+  ctx.font='500 12px "DM Sans",sans-serif';ctx.fillStyle='#1a1a1a';ctx.textAlign='center';ctx.fillText(text,x+w/2,y+h/2+4);ctx.restore()}
+function tick(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);phase+=0.04;blinkTimer++;
+  let blink=false;
+  if(blinkTimer>nextBlink){blinkDuration++;blink=true;if(blinkDuration>4){blinkDuration=0;blinkTimer=0;nextBlink=80+Math.random()*120}}
+  let ox=0,oy=0,armL=0,armR=0,leg=0,scale=1,opacity=1,faceDir=1,forearm=0,ht=0,mood='smile',speechOpacity=0,sp='';
+  if(state==='idle'){oy=Math.sin(phase)*5;armL=Math.sin(phase*0.7)*0.12;armR=-Math.sin(phase*0.7)*0.12;leg=Math.sin(phase*0.5)*0.06}
+  else if(state==='salute'){oy=Math.sin(phase*0.5)*2;armL=-1.05;forearm=-1.15;ht=-0.14;sp='Right away! 🎩';speechOpacity=1}
+  else if(state==='runOff'){
+    runProgress=Math.min(runProgress+0.018,1);const p=easeInOut(runProgress);
+    ox=p*180;scale=1-p*0.35;opacity=1-Math.max(0,(p-0.75)*4);
+    armL=Math.sin(phase*4)*0.6;armR=-Math.sin(phase*4)*0.6;leg=Math.sin(phase*4)*0.35;mood='o';
+    if(runProgress>=1){state='gone';runProgress=0}}
+  else if(state==='gone'){opacity=0}
+  else if(state==='done'){
+    doneProgress=Math.min(doneProgress+0.022,1);const p=easeOut(doneProgress);
+    ox=(1-p)*-180;scale=0.65+p*0.35;opacity=p;armL=-0.55;forearm=Math.sin(phase*6)*0.8-0.4;mood='done';sp='Done! ✓';
+    speechOpacity=Math.min(1,(doneProgress-0.5)*4);
+    if(speechTimer>0)speechTimer--;if(doneProgress>=1&&speechTimer===0)speechTimer=160}
+  else if(state==='peek'){
+    peekProgress=Math.min(peekProgress+0.03,1);const p=easeOut(peekProgress);
+    ox=80-p*60;oy=Math.sin(phase*0.5)*3;opacity=p;armL=0.15;mood='o'}
+  if(speechTimer>0)speechOpacity=Math.min(1,speechTimer/20);
+  drawButler(ox,oy,blink,mood,armL,armR,leg,scale,opacity,faceDir,forearm,ht);
+  if(sp||state==='done')drawSpeech(sp,ox,oy,speechOpacity);
+  requestAnimationFrame(tick)}
+function setState(s,btn){
+  state=s;runProgress=0;doneProgress=0;peekProgress=0;speechTimer=0;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active')}
 tick();
 
-/* ─── MODAL ─── */
-function openModal() { document.getElementById('modal').classList.add('open'); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function closeModalOutside(e) { if (e.target === document.getElementById('modal')) closeModal(); }
-
-/* ─── WAITLIST ─── */
-async function joinWaitlist() {
-  const input = document.getElementById('email-input');
-  const email = input.value.trim();
-  if (!email || !email.includes('@')) {
-    input.style.borderColor = '#e05a5a';
-    setTimeout(() => input.style.borderColor = '', 1200);
-    return;
-  }
-  const btn = document.querySelector('.waitlist-form button');
-  btn.textContent = 'Joining...';
-  btn.disabled = true;
-  try {
-    const res = await fetch('/api/waitlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, source: 'Landing Page' })
-    });
-    if (res.ok) {
-      document.querySelector('.waitlist-form').style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
-    } else {
-      btn.textContent = 'Try again';
-      btn.disabled = false;
-    }
-  } catch {
-    btn.textContent = 'Try again';
-    btn.disabled = false;
-  }
+// MODAL
+function openModal(){
+  const m=document.getElementById('modal');
+  m.style.display='flex';
+  const v=document.getElementById('demo-video');
+  if(v)v.play();
 }
+function closeModal(){
+  const m=document.getElementById('modal');
+  m.style.display='none';
+  const v=document.getElementById('demo-video');
+  if(v){v.pause();v.currentTime=0}
+}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal()}
 
-document.getElementById('email-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') joinWaitlist();
-});
+// WAITLIST — using Formspree, replace YOUR_FORM_ID
+async function joinWaitlist(){
+  const input=document.getElementById('email-input');
+  const email=input.value.trim();
+  if(!email||!email.includes('@')){input.style.borderColor='#e05a5a';setTimeout(()=>input.style.borderColor='',1200);return}
+  const btn=document.querySelector('.waitlist-form button');
+  btn.textContent='Joining...';btn.disabled=true;
+  try{
+    const res=await fetch('https://formspree.io/f/maqgblrn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    if(res.ok){document.querySelector('.waitlist-form').style.display='none';document.getElementById('success-msg').style.display='block'}
+    else{btn.textContent='Try again';btn.disabled=false}
+  }catch{btn.textContent='Try again';btn.disabled=false}
+}
+document.getElementById('email-input').addEventListener('keydown',e=>{if(e.key==='Enter')joinWaitlist()});
 </script>
 </body>
 </html>
