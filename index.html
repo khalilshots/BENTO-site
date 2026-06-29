@@ -176,7 +176,7 @@
 <div class="modal-overlay" id="modal" style="display:none" onclick="closeModalOutside(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <video id="demo-video" width="100%" style="border-radius:12px;display:block" controls muted loop>
+<video id="demo-video" width="100%" style="border-radius:12px;display:block" controls playsinline muted loop preload="auto">
       <source src="/bentodemo.mp4" type="video/mp4">
     </video>
   </div>
@@ -264,7 +264,10 @@ function openModal(){
   const m=document.getElementById('modal');
   m.style.display='flex';
   const v=document.getElementById('demo-video');
-  if(v)v.play();
+  if(v){
+    v.load();
+    v.play().catch(()=>{});
+  }
 }
 function closeModal(){
   const m=document.getElementById('modal');
